@@ -1,0 +1,22 @@
+name: unshare-workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  unshare-job:  
+    runs-on: debian-latest
+
+    steps:
+      - name: Print info
+        run: |
+          apt update && apt install -y uidmap
+          cat /etc/subgid
+          cat /etc/subuid
+          unshare --map-auto --map-root-user -- id
+
+      - name: Use unshare
+        run: |
+          touch test.txt
+          unshare --map-auto --map-root-user -- sh -c 'echo "unshare passed"; chown 1:1 test.txt'
+          ls -ln
