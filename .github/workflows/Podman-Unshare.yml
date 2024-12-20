@@ -1,0 +1,22 @@
+name: Podman-unshare-workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  unshare-job:  
+    runs-on: debian-latest
+
+    steps:
+      - name: Print info
+        run: |
+          apt update && apt install -y podman
+          cat /etc/subgid
+          cat /etc/subuid
+          podman unshare -- id
+
+      - name: Use unshare
+        run: |
+          touch test.txt
+          podman unshare -- sh -c 'echo "unshare passed"; chown 1:1 test.txt'
+          ls -ln
